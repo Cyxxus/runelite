@@ -59,6 +59,15 @@ public interface RuneLiteConfig extends Config
 	)
 	String overlaySettings = "overlaySettings";
 
+	@ConfigSection(
+		name = "Progress pie settings",
+		description = "Settings relating to the progress pie overlay.",
+		position = 45,
+		parentSection = overlaySettings,
+		closedByDefault = true
+	)
+	String pieSettings = "pieSettings";
+
 	@ConfigItem(
 		keyName = "gameSize",
 		name = "Game size",
@@ -421,6 +430,52 @@ public interface RuneLiteConfig extends Config
 	default Color overlayBackgroundColor()
 	{
 		return ComponentConstants.STANDARD_BACKGROUND_COLOR;
+	}
+
+	@ConfigItem(
+			keyName = "progressPieOutline",
+			name = "Show progress pie outline",
+			description = "Shows the outline around progress pie overlays.",
+			position = 0,
+			section = pieSettings
+	)
+	default boolean progressPieOutline()
+	{
+		return true;
+	}
+
+	enum ProgressPieDirection
+	{
+		CLOCKWISE,
+		COUNTERCLOCKWISE,
+		BOTH
+	}
+
+	@ConfigItem(
+			keyName = "progressPieDirection",
+			name = "Direction",
+			description = "Configures the direction that the progress pie overlays fill.",
+			position = 1,
+			section = pieSettings
+	)
+	default ProgressPieDirection progressPieDirection()
+	{
+		return ProgressPieDirection.COUNTERCLOCKWISE;
+	}
+
+	@Range(
+			max = 360
+	)
+	@ConfigItem(
+			keyName = "progressPieStartAngle",
+			name = "Starting angle",
+			description = "Configures the starting angle of the progress pie overlays.",
+			position = 2,
+			section = pieSettings
+	)
+	default int progressPieStartAngle()
+	{
+		return 90;
 	}
 
 	@ConfigItem(

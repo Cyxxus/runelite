@@ -32,11 +32,14 @@ import java.awt.Stroke;
 import java.awt.geom.Arc2D;
 import lombok.Setter;
 import net.runelite.api.Point;
+import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.ui.overlay.RenderableEntity;
 
 @Setter
 public class ProgressPieComponent implements RenderableEntity
 {
+	private static RuneLiteConfig runeLiteConfig = null;
+
 	private int diameter = 25;
 	private Color borderColor = Color.WHITE;
 	private Color fill = Color.WHITE;
@@ -47,9 +50,31 @@ public class ProgressPieComponent implements RenderableEntity
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		double startAngle = 90.0;
+		if (null != runeLiteConfig)
+		{
+			switch (runeLiteConfig.progressPieDirection())
+			{
+				case CLOCKWISE:
+					startAngle = runeLiteConfig.progressPieStartAngle() - (progress * 360.0);
+					break;
+				case COUNTERCLOCKWISE:
+					startAngle = runeLiteConfig.progressPieStartAngle();
+					break;
+				case BOTH:
+					startAngle = runeLiteConfig.progressPieStartAngle() - (progress * 180.0);
+					break;
+			}
+
+			if (0.0 > startAngle)
+			{
+				startAngle += 360.0;
+			}
+		}
+
 		//Construct the arc
 		Arc2D.Float arc = new Arc2D.Float(Arc2D.PIE);
-		arc.setAngleStart(90);
+		arc.setAngleStart(startAngle);
 		arc.setAngleExtent(progress * 360);
 		arc.setFrame(position.getX() - diameter / 2, position.getY() - diameter / 2, diameter, diameter);
 
@@ -57,10 +82,13 @@ public class ProgressPieComponent implements RenderableEntity
 		graphics.setColor(fill);
 		graphics.fill(arc);
 
-		//Draw the outlines of the arc
-		graphics.setStroke(stroke);
-		graphics.setColor(borderColor);
-		graphics.drawOval(position.getX() - diameter / 2, position.getY() - diameter / 2, diameter, diameter);
+		if (null == runeLiteConfig || runeLiteConfig.progressPieOutline())
+		{
+			//Draw the outlines of the arc
+			graphics.setStroke(stroke);
+			graphics.setColor(borderColor);
+			graphics.drawOval(position.getX() - diameter / 2, position.getY() - diameter / 2, diameter, diameter);
+		}
 
 		return new Dimension(diameter, diameter);
 	}
@@ -69,5 +97,10 @@ public class ProgressPieComponent implements RenderableEntity
 	{
 		this.borderColor = border;
 		stroke = new BasicStroke(size);
+	}
+
+	public static void setConfig(RuneLiteConfig runeLiteConfig)
+	{
+		ProgressPieComponent.runeLiteConfig = runeLiteConfig;
 	}
 }
