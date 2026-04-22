@@ -68,6 +68,7 @@ import net.runelite.client.input.MouseAdapter;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.JagexColors;
+import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.HotkeyListener;
 import org.slf4j.Marker;
@@ -156,6 +157,8 @@ public class OverlayRenderer extends MouseAdapter
 		keyManager.registerKeyListener(hotkeyListener);
 		mouseManager.registerMouseListener(this);
 		eventBus.register(this);
+
+		ProgressPieComponent.setConfig(runeLiteConfig);
 	}
 
 	@Subscribe
